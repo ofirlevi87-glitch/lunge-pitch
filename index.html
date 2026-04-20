@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUNGE — Employee Performance OS for Tech Companies</title>
+<meta name="description" content="15–20 דקות ביום. ב-Open Space. בלי ציוד. תוכנית B2B לחברות הייטק שמורידה ימי מחלה, פציעות ארגונומיות, ו-attrition.">
+<meta property="og:title" content="LUNGE — Performance OS for Tech Companies">
+<meta property="og:description" content="In-seat ergonomic sessions for engineers. Built for tech, paired with Chef Lunge AI nutrition.">
+<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Hebrew:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0a0a0a; --off-white:#f0ede8; --accent:#c8f23a;
+    --mid:#1e1e1e; --muted:#555; --border:rgba(255,255,255,0.08);
+    --danger:#e55;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--black);color:var(--off-white);font-family:'Noto Sans Hebrew',sans-serif;overflow-x:hidden;line-height:1.5}
+  a{color:inherit}
+
+  /* HERO */
+  .hero{min-height:100vh;display:grid;grid-template-rows:auto 1fr auto;padding:2rem 4rem;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;top:-200px;right:-200px;width:700px;height:700px;background:radial-gradient(circle,rgba(200,242,58,0.12) 0%,transparent 70%);pointer-events:none}
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding-bottom:2rem;border-bottom:1px solid var(--border);gap:1rem;flex-wrap:wrap}
+  .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;letter-spacing:0.15em;color:var(--accent)}
+  .nav{display:flex;gap:1.5rem;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:#888;letter-spacing:0.08em}
+  .nav a{text-decoration:none;transition:color 0.2s}
+  .nav a:hover{color:var(--accent)}
+  .badge{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--muted);border:1px solid #333;padding:0.3rem 0.8rem;letter-spacing:0.1em}
+
+  .hero-center{display:flex;flex-direction:column;justify-content:center;gap:2rem;padding:6rem 0 4rem}
+  .error-tag{font-family:'IBM Plex Mono',monospace;font-size:0.85rem;color:var(--accent);letter-spacing:0.05em;opacity:0;animation:fadeUp 0.6s ease 0.2s forwards}
+  .hero-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(3rem,7vw,6.5rem);line-height:1.0;max-width:980px;opacity:0;animation:fadeUp 0.7s ease 0.4s forwards}
+  .hero-title span{color:var(--accent)}
+  .hero-sub{font-size:1.15rem;color:#aaa;max-width:620px;line-height:1.7;font-weight:300;opacity:0;animation:fadeUp 0.7s ease 0.6s forwards}
+  .hero-cta{display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;opacity:0;animation:fadeUp 0.7s ease 0.8s forwards}
+  .btn-primary{background:var(--accent);color:var(--black);font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:0.85rem;letter-spacing:0.08em;padding:1rem 2rem;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;display:inline-block;border:none;cursor:pointer}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,242,58,0.25)}
+  .btn-ghost{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:#888;letter-spacing:0.05em;text-decoration:none;border:1px solid #333;padding:1rem 1.5rem;transition:border-color 0.2s,color 0.2s}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+  .hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border);opacity:0;animation:fadeUp 0.7s ease 1s forwards}
+  .stat{background:var(--black);padding:2rem}
+  .stat-num{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;color:var(--accent);line-height:1}
+  .stat-label{font-size:0.8rem;color:var(--muted);margin-top:0.4rem;line-height:1.5}
+
+  /* SECTION GENERIC */
+  section{padding:6rem 4rem;border-top:1px solid var(--border)}
+  .section-label{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:1rem}
+  .section-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,4vw,3.5rem);line-height:1.1;max-width:780px;margin-bottom:1.5rem}
+  .section-intro{color:#999;font-size:1rem;line-height:1.8;max-width:680px;margin-bottom:3rem}
+
+  /* PROBLEM */
+  .problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+  .problem-card{background:var(--mid);padding:2.5rem;position:relative;overflow:hidden}
+  .problem-card::before{content:attr(data-num);font-family:'Syne',sans-serif;font-size:8rem;font-weight:800;color:rgba(255,255,255,0.03);position:absolute;top:-1rem;left:1rem;line-height:1}
+  .problem-card h3{font-family:'Syne',sans-serif;font-size:1.2rem;margin-bottom:0.8rem;color:var(--off-white)}
+  .problem-card p{font-size:0.9rem;color:#888;line-height:1.7}
+  .problem-card .accent-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;margin-bottom:1.2rem}
+
+  /* MEDICAL CONDITIONS — the clinical pitch */
+  .conditions{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border)}
+  .condition{background:#0d0d0d;padding:2.5rem;display:flex;flex-direction:column;gap:1rem;position:relative}
+  .condition-head{display:flex;align-items:center;gap:1rem}
+  .condition-num{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:0.15em;border:1px solid var(--accent);padding:0.25rem 0.6rem}
+  .condition-en{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase}
+  .condition h3{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;color:var(--off-white)}
+  .condition .clinical{font-size:0.88rem;color:#999;line-height:1.7}
+  .condition .fix{font-size:0.85rem;color:var(--accent);line-height:1.6;border-right:2px solid var(--accent);padding-right:1rem;margin-top:0.5rem}
+
+  /* SOLUTION */
+  .solution-layout{display:grid;grid-template-columns:1fr 1.5fr;gap:4rem;align-items:start}
+  .solution-desc{font-size:1rem;color:#aaa;line-height:1.8}
+  .pillars{display:flex;flex-direction:column;gap:0}
+  .pillar{border-top:1px solid var(--border);padding:1.8rem 0;display:grid;grid-template-columns:2.5rem 1fr;gap:1.2rem;align-items:start;transition:background 0.2s}
+  .pillar:hover{background:rgba(200,242,58,0.03)}
+  .pillar-icon{font-size:1.3rem;margin-top:0.1rem}
+  .pillar-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:0.4rem}
+  .pillar-text{font-size:0.85rem;color:#888;line-height:1.7}
+
+  /* ROI TABLE */
+  .roi-table{width:100%;border-collapse:collapse}
+  .roi-table th{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;padding:1rem 1.5rem;text-align:right;border-bottom:1px solid var(--border)}
+  .roi-table td{padding:1.2rem 1.5rem;font-size:0.9rem;border-bottom:1px solid var(--border);vertical-align:top}
+  .roi-table tr:hover td{background:rgba(255,255,255,0.02)}
+  .roi-table td:first-child{font-family:'Syne',sans-serif;font-weight:700;color:var(--off-white)}
+  .roi-table td:nth-child(2){color:var(--danger)}
+  .roi-table td:nth-child(3){color:var(--accent)}
+
+  /* OFFERING */
+  .offering-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+  .offering-card{background:var(--black);padding:2.5rem 2rem;display:flex;flex-direction:column;gap:1rem;transition:background 0.3s}
+  .offering-card:hover{background:#111}
+  .offering-card .tag{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--accent);letter-spacing:0.15em}
+  .offering-card h3{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700}
+  .offering-card ul{list-style:none;display:flex;flex-direction:column;gap:0.6rem}
+  .offering-card li{font-size:0.85rem;color:#888;padding-right:1rem;position:relative;line-height:1.5}
+  .offering-card li::before{content:'→';position:absolute;right:0;color:var(--accent);font-size:0.7rem;top:0.15rem}
+
+  /* APP SECTION */
+  .app-section{background:linear-gradient(180deg,#0a0a0a 0%,#0d0d0d 100%)}
+  .app-layout{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+  .app-copy h2{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,3.5vw,3rem);line-height:1.1;margin-bottom:1.5rem}
+  .app-copy h2 span{color:var(--accent)}
+  .app-copy p{color:#aaa;line-height:1.8;margin-bottom:1rem;font-size:1rem}
+  .app-features{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:2rem 0}
+  .app-feature{font-size:0.85rem;color:#999;border-right:2px solid var(--accent);padding-right:0.8rem;line-height:1.5}
+  .app-feature strong{color:var(--off-white);display:block;margin-bottom:0.2rem;font-family:'Syne',sans-serif}
+  .store-badges{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem}
+  .store-badge{display:inline-flex;align-items:center;gap:0.8rem;background:#000;border:1px solid #333;padding:0.85rem 1.4rem;text-decoration:none;color:#fff;transition:border-color 0.2s,transform 0.2s;border-radius:6px}
+  .store-badge:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .store-badge svg{width:28px;height:28px;flex-shrink:0;fill:#fff}
+  .store-badge .small{font-size:0.65rem;color:#999;display:block;line-height:1}
+  .store-badge .big{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;display:block;line-height:1.2;margin-top:0.15rem}
+  .phone-mock{background:linear-gradient(135deg,#1a1a1a 0%,#0d0d0d 100%);border:1px solid var(--border);border-radius:24px;padding:2rem;display:flex;flex-direction:column;gap:1.2rem;position:relative;overflow:hidden}
+  .phone-mock::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(200,242,58,0.06) 0%,transparent 50%);pointer-events:none}
+  .mock-row{display:flex;justify-content:space-between;align-items:center;padding:1rem;background:rgba(255,255,255,0.03);border-radius:12px;position:relative}
+  .mock-row .label{font-size:0.8rem;color:#888}
+  .mock-row .value{font-family:'Syne',sans-serif;font-weight:700;color:var(--accent)}
+  .mock-row.big .value{font-size:1.6rem}
+
+  /* QUOTE */
+  .quote-section{background:var(--mid);text-align:center;padding:5rem 4rem;border-top:1px solid var(--border)}
+  .quote-text{font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3.5vw,2.8rem);font-weight:700;max-width:900px;margin:0 auto 1.5rem;line-height:1.3}
+  .quote-text em{color:var(--accent);font-style:normal}
+  .quote-sub{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--muted);letter-spacing:0.1em}
+
+  /* CTA */
+  .cta-section{display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:50vh}
+  .cta-left{padding:5rem 4rem;display:flex;flex-direction:column;justify-content:center;gap:2rem}
+  .cta-left h2{font-family:'Syne',sans-serif;font-size:clamp(2rem,4vw,3.5rem);font-weight:800;line-height:1.1}
+  .cta-left p{color:#888;font-size:0.95rem;line-height:1.7;max-width:420px}
+  .cta-right{background:var(--accent);display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:5rem 4rem;gap:1.5rem}
+  .cta-right h3{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;color:var(--black)}
+  .cta-right p{font-size:0.9rem;color:#1a2a00;line-height:1.7;max-width:380px}
+  .btn-dark{background:var(--black);color:var(--accent);font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:0.85rem;letter-spacing:0.08em;padding:1rem 2rem;text-decoration:none;display:inline-block;margin-top:0.5rem;transition:transform 0.2s}
+  .btn-dark:hover{transform:translateY(-2px)}
+
+  footer{border-top:1px solid var(--border);padding:2rem 4rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+  .footer-logo{font-family:'Syne',sans-serif;font-weight:800;color:var(--accent);letter-spacing:0.15em}
+  .footer-note{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--muted)}
+  .footer-links{display:flex;gap:1.5rem;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:#666}
+  .footer-links a{text-decoration:none;transition:color 0.2s}
+  .footer-links a:hover{color:var(--accent)}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}
+  .reveal.visible{opacity:1;transform:none}
+
+  @media (max-width:900px){
+    .hero{padding:1.5rem 1.5rem}
+    section{padding:4rem 1.5rem}
+    .nav{display:none}
+    .problem-grid,.offering-grid,.conditions{grid-template-columns:1fr}
+    .solution-layout,.app-layout{grid-template-columns:1fr;gap:2.5rem}
+    .cta-section{grid-template-columns:1fr}
+    .quote-section,.cta-left,.cta-right{padding:3rem 1.5rem}
+    .hero-stats{grid-template-columns:1fr}
+    footer{flex-direction:column;text-align:center;padding:2rem 1.5rem}
+    .app-features{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" style="border-top:none;padding-top:2rem;padding-bottom:0">
+  <header class="topbar">
+    <div class="logo">LUNGE</div>
+    <nav class="nav">
+      <a href="#problem">// THE PROBLEM</a>
+      <a href="#conditions">// CLINICAL</a>
+      <a href="#roi">// ROI</a>
+      <a href="#app">// APP</a>
+      <a href="#cta">// PILOT</a>
+    </nav>
+    <div class="badge">HR DECISION DECK // 2025</div>
+  </header>
+
+  <div class="hero-center">
+    <div class="error-tag">// ERROR 404: Lower back and wrist muscles not found in your office</div>
+    <h1 class="hero-title">
+      Employee Performance<br><span>Operating System</span><br>for Tech Companies
+    </h1>
+    <p class="hero-sub">
+      15–20 דקות ביום. בכיסא. ב-Open Space. בלי ציוד, בלי החלפת בגדים, בלי לעצור Sprint.
+      תוכנית B2B לחברות הייטק שמורידה ימי מחלה, פציעות ארגונומיות, ו-attrition של מפתחים בכירים.
+    </p>
+    <div class="hero-cta">
+      <a href="#cta" class="btn-primary">בקשו פגישה</a>
+      <a href="#roi" class="btn-ghost">צפו ב-ROI →</a>
+      <a href="#app" class="btn-ghost">הורידו את האפליקציה ↓</a>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">9+</div><div class="stat-label">שעות ישיבה ממוצעות ליום<br>לעובד פיתוח</div></div>
+    <div class="stat"><div class="stat-num">₪18K</div><div class="stat-label">עלות ממוצעת לחברה<br>לכל יום היעדרות של עובד בכיר</div></div>
+    <div class="stat"><div class="stat-num">340%</div><div class="stat-label">ROI מדווח על תוכניות<br>wellness אקטיביות בהייטק</div></div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-label reveal">// THE PROBLEM</div>
+  <h2 class="section-title reveal">המפתחים שלכם שוברים את עצמם.<br>בשקט.</h2>
+
+  <div class="problem-grid reveal">
+    <div class="problem-card" data-num="01"><div class="accent-dot"></div>
+      <h3>הגוף לא עוצר כשה-Sprint לא עוצר</h3>
+      <p>ישיבה ממושכת, תנוחות שגויות, ומסך ברמה מקרוב — כל אלה צוברים נזק שלא רואים עד שכבר מאוחר. הכאב מגיע בשקט, ואיתו פגיעה בריכוז, בפרודוקטיביות, ובמצב הרוח.</p>
+    </div>
+    <div class="problem-card" data-num="02"><div class="accent-dot"></div>
+      <h3>ימי מחלה הם רק קצה הקרחון</h3>
+      <p>פציעות ארגונומיות, כאבי גב ופרקים, ו-Carpal Tunnel — אלו לא רק עלויות רפואיות. הם עיכוב בפרויקטים, load על הצוות, וירידה באיכות הקוד.</p>
+    </div>
+    <div class="problem-card" data-num="03"><div class="accent-dot"></div>
+      <h3>Wellness "על הנייר" לא עוצר attrition</h3>
+      <p>ביטוח בריאות ומנוי לחדר כושר זה טוב — אבל העובד לא משתמש בהם. ה-Benefits הלא-מנוצלים הופכים לציניות, לא לרטנשן.</p>
+    </div>
+    <div class="problem-card" data-num="04"><div class="accent-dot"></div>
+      <h3>Brain Fog = Bugs יקרים</h3>
+      <p>תשישות גופנית קשורה ישירות לירידה בתפקוד קוגניטיבי. עובד שגופו ב-chronic stress חושב לאט יותר, מתרכז פחות, ויוצר יותר bugs. זה לא soft — זה quantifiable.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CLINICAL — 6 CONDITIONS -->
+<section id="conditions">
+  <div class="section-label reveal">// CLINICAL CASE</div>
+  <h2 class="section-title reveal">6 פציעות שקטות שעולות לכם כסף.<br>כל יום.</h2>
+  <p class="section-intro reveal">
+    אלו לא "כאב גב" כללי. אלו תסמונות מתועדות עם מקור ביו-מכאני ברור — וכולן ניתנות למניעה ב-15 דקות ביום של תרגול ממוקד. כל אחת מהן לבדה מצדיקה את התוכנית.
+  </p>
+
+  <div class="conditions reveal">
+    <div class="condition">
+      <div class="condition-head">
+        <span class="condition-num">01</span>
+        <span class="condition-en">Carpal Tunnel Syndrome</span>
+      </div>
+      <h3>תסמונת התעלה הקרפלית</h3>
+      <p class="clinical">המצב השכיח ביותר אצל מקלידים כבדים ועובדי תנועה חוזרת. לחץ מצטבר על העצב המדיאני בתעלה הקרפלית גורם לחוסר תחושה, כאב, ואובדן תפקוד באצבעות.</p>
+      <p class="fix">→ מתיחות שורש כף יד מורידות את הלחץ על העצב לפני שמגיעים לטיפול פולשני.</p>
+    </div>
+    <div class="condition">
+      <div class="condition-head">
+        <span class="condition-num">02</span>
+        <span class="condition-en">Text Neck / Forward Head Posture</span>
+      </div>
+      <h3>צוואר טקסט — תנוחת ראש קדימה</h3>
+      <p class="clinical">הטיית הראש קדימה לעבר המסך מטילה עומס עצום על חוליות הצוואר. כל אינץ' שהראש מקדים — מכפיל את העומס. התוצאה: דגנרציה של דיסקים וכאבי ראש כרוניים.</p>
+      <p class="fix">→ מתיחות מיישרות את הראש מעל ציר הגוף ומונעות את הנזק לחוליות.</p>
+    </div>
+    <div class="condition">
+      <div class="condition-head">
+        <span class="condition-num">03</span>
+        <span class="condition-en">Rounded Shoulders</span>
+      </div>
+      <h3>כתפיים מעוגלות</h3>
+      <p class="clinical">עבודה ממושכת מול שולחן מקצרת את שרירי החזה ומותחת יתר על המידה את הגב העליון. התוצאה: יציבה כפופה, דלקת ב-rotator cuff, וכאבי כתף כרוניים.</p>
+      <p class="fix">→ מתיחות פתיחת חזה משחזרות את היציבה ומונעות את הדלקת.</p>
+    </div>
+    <div class="condition">
+      <div class="condition-head">
+        <span class="condition-num">04</span>
+        <span class="condition-en">Lower Back Pain (L1–L5)</span>
+      </div>
+      <h3>כאב גב תחתון</h3>
+      <p class="clinical">ישיבה ממושכת מקצרת את ה-hip flexors ומושכת את האגן קדימה — מה שמעמיס על חוליות L1–L5. זה השורש של רוב תלונות "הגב התפוס" שאתם שומעים אצל מפתחים בכירים.</p>
+      <p class="fix">→ מתיחות בעמידה משחררות את האגן ומורידות את הלחץ מהחוליות התחתונות.</p>
+    </div>
+    <div class="condition">
+      <div class="condition-head">
+        <span class="condition-num">05</span>
+        <span class="condition-en">Venous Insufficiency</span>
+      </div>
+      <h3>אי-ספיקת ורידים</h3>
+      <p class="clinical">כשהרגליים לא זזות שעות, משאבת השריר בשוק שאמורה להחזיר דם ללב — מפסיקה לעבוד. התוצאה: בצקת, ולאורך זמן, דליות. זה גם המקור ל-energy crash אחרי הצהריים.</p>
+      <p class="fix">→ תנועה מפעילה מחדש את משאבת השוק ומחזירה את האנרגיה לסשן אחר הצהריים.</p>
+    </div>
+    <div class="condition">
+      <div class="condition-head">
+        <span class="condition-num">06</span>
+        <span class="condition-en">Digital Eye Strain</span>
+      </div>
+      <h3>עומס עיניים דיגיטלי</h3>
+      <p class="clinical">שרירי ה-ciliary שמפוקסים את העדשה נשארים בכיווץ קבוע שעות. התוצאה: עייפות, טשטוש כרוני, וכאבי ראש שכל מפתח שלכם מכיר — אבל לא מדווח עליהם.</p>
+      <p class="fix">→ הסשן מאלץ את העובד להסתכל למרחק ולפקס מחדש — Reset ויזואלי מובנה.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section>
+  <div class="section-label reveal">// THE SOLUTION</div>
+  <h2 class="section-title reveal">LUNGE — ה-Patch שהגוף שלכם צריך</h2>
+
+  <div class="solution-layout reveal">
+    <div>
+      <p class="solution-desc">
+        LUNGE היא תוכנית B2B מקצה לקצה שמשתלבת בחיי היום-יום של העובד — ללא שינויים בשגרת העבודה, ללא הפסקות ארוכות. 15-20 דקות ביום, Low Latency Movement, בתוך ה-Open Space שלכם.
+        <br><br>
+        מדריך חי מנחה את הסשן (לא וידאו מוקלט), כך שנוצרת התחייבות ויזואלית וריטואל יומי שעובדים באמת מגיעים אליו. כל סשן מטפל ישירות בשש התסמונות שלמעלה.
+        <br><br>
+        לצד התוכנית, אפליקציית <strong>Chef Lunge</strong> זמינה כ-Add-on לעובדים שרוצים לסגור גם את הצד התזונתי — אבל זה לא תנאי לחוזה.
+      </p>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar"><div class="pillar-icon">🏃</div><div>
+        <div class="pillar-title">Live Daily Sessions</div>
+        <div class="pillar-text">15–20 דק׳ ביום עם מדריך חי על המסך. גב תחתון, צוואר, כתפיים, פרקים, אצבעות, עיניים. בלי ציוד.</div>
+      </div></div>
+      <div class="pillar"><div class="pillar-icon">🧠</div><div>
+        <div class="pillar-title">AI Nutrition Engine (Optional)</div>
+        <div class="pillar-text">Chef Lunge מחשב BMR אישי, בונה תפריט, ומנהל macro optimization. צילום מנה → ערכים מלאים. עוזר AI 24/7.</div>
+      </div></div>
+      <div class="pillar"><div class="pillar-icon">📊</div><div>
+        <div class="pillar-title">HR Dashboard</div>
+        <div class="pillar-text">נוכחות, אחוזי השתתפות, מגמות. רק aggregated insights — בלי data אישי. מספיק כדי לחדש את החוזה.</div>
+      </div></div>
+      <div class="pillar"><div class="pillar-icon">🎯</div><div>
+        <div class="pillar-title">Zero Downtime Integration</div>
+        <div class="pillar-text">משתלב בשגרה קיימת. אין צורך לעצור עבודה, לצאת מהבניין, או לשנות תהליכים. Cold Boot בלבד.</div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ROI -->
+<section id="roi">
+  <div class="section-label reveal">// BUSINESS IMPACT</div>
+  <h2 class="section-title reveal">מה שה-CFO צריך לראות</h2>
+
+  <table class="roi-table reveal">
+    <thead><tr><th>מדד</th><th>לפני LUNGE</th><th>אחרי LUNGE</th></tr></thead>
+    <tbody>
+      <tr><td>ימי מחלה / עובד / שנה</td><td>8–12 יום</td><td>↓ 40–60%</td></tr>
+      <tr><td>פציעות ארגונומיות</td><td>3–5 תביעות / 100 עובדים</td><td>↓ עד 70%</td></tr>
+      <tr><td>Employee Attrition</td><td>Wellness כ-checkbox</td><td>Retention factor אמיתי</td></tr>
+      <tr><td>פרודוקטיביות קוגניטיבית</td><td>Brain Fog post-lunch</td><td>↑ ריכוז, פחות bugs</td></tr>
+      <tr><td>Employer Branding</td><td>Benefits על הנייר</td><td>תוכנית wellness נראית ומוכחת</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- OFFERING -->
+<section>
+  <div class="section-label reveal">// WHAT YOU GET</div>
+  <h2 class="section-title reveal">שלושה רבדים, מערכת אחת</h2>
+
+  <div class="offering-grid reveal">
+    <div class="offering-card">
+      <div class="tag">LAYER 01</div>
+      <h3>Physical Hardware<br>Training</h3>
+      <ul>
+        <li>סשנים יומיים מובנים ב-Open Space</li>
+        <li>מדריכים מוסמכים עם ניסיון בסביבות טכנולוגיה</li>
+        <li>Full Library גישה לספריית תרגילים</li>
+        <li>תוכניות היברידיות: Office + Home + Gym</li>
+      </ul>
+    </div>
+    <div class="offering-card">
+      <div class="tag">LAYER 02 — OPTIONAL</div>
+      <h3>Chef Lunge<br>AI Nutrition OS</h3>
+      <ul>
+        <li>Visual Intake Analysis — צלמו ארוחה, קבלו ערכים</li>
+        <li>BMR Calculation אוטומטי לפי גיל, גובה, משקל</li>
+        <li>תפריט גמיש עם Dynamic Flexibility</li>
+        <li>AI Personal Assistant 24/7 לתזונה וכושר</li>
+      </ul>
+    </div>
+    <div class="offering-card">
+      <div class="tag">LAYER 03</div>
+      <h3>HR Monitoring<br>&amp; Reporting</h3>
+      <ul>
+        <li>Dashboard ניהולי עם KPIs ברורים</li>
+        <li>Aggregated Progress Tracking</li>
+        <li>Automated Reminders — מים, ארוחות, תרגול</li>
+        <li>דוחות חודשיים להנהלה</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- APP SECTION -->
+<section id="app" class="app-section">
+  <div class="section-label reveal">// THE APP — OPTIONAL ADD-ON</div>
+  <h2 class="section-title reveal" style="margin-bottom:0">Chef Lunge</h2>
+
+  <div class="app-layout reveal" style="margin-top:3rem">
+    <div class="app-copy">
+      <h2>תזונה <span>אוטומטית</span><br>לעובדי הייטק</h2>
+      <p>
+        אפליקציית Chef Lunge חיה ופועלת ב-iOS וב-Android, עם אלפי משתמשים פעילים. היא משלימה את תוכנית התרגול: כשהגוף זז וגם אוכל נכון — התוצאות קופצות פי כמה.
+      </p>
+      <p>
+        עובד שמשתתף בסשן יומי + משתמש באפליקציה הוא Performance Stack מלא. אבל גם בלי האפליקציה — התוכנית עומדת בפני עצמה.
+      </p>
+
+      <div class="app-features">
+        <div class="app-feature"><strong>📸 צילום מנה → ערכים</strong>קלוריות, חלבון, פחמימות, שומן ב-AI</div>
+        <div class="app-feature"><strong>🧮 BMR אישי</strong>תפריט מותאם לגיל, גובה, משקל, מטרה</div>
+        <div class="app-feature"><strong>🤖 AI Assistant</strong>שאלות תזונה וכושר 24/7</div>
+        <div class="app-feature"><strong>💧 מעקב מים + צעדים</strong>אינטגרציה עם טלפון/שעון</div>
+        <div class="app-feature"><strong>⚖️ מאזניים פר גוף</strong>מעקב היקפים ושומן</div>
+        <div class="app-feature"><strong>🎬 Training Sessions</strong>סשני אימון מלאים חינם</div>
+      </div>
+
+      <div class="store-badges">
+        <a class="store-badge" href="https://apps.apple.com/es/app/chef-lunge/id6745457803?l=en-GB" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09M12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25"/></svg>
+          <span><span class="small">Download on the</span><span class="big">App Store</span></span>
+        </a>
+        <a class="store-badge" href="https://play.google.com/store/apps/details?id=com.nutricloud.ChefLunge" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M3.609 1.814 13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734c0-.366.197-.69.609-.92zM14.998 13.205l2.392 2.392-12.066 6.876 9.674-9.268zM21.45 12.0l-3.05 1.74-2.71-2.7 2.71-2.7 3.05 1.74c.46.27.46.95 0 1.92zm-6.45-1.205L5.324 1.546l12.066 6.876-2.39 2.373z"/></svg>
+          <span><span class="small">GET IT ON</span><span class="big">Google Play</span></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="phone-mock">
+      <div class="mock-row big"><span class="label">BMR יומי</span><span class="value">2,140 kcal</span></div>
+      <div class="mock-row"><span class="label">חלבון</span><span class="value">128g / 160g</span></div>
+      <div class="mock-row"><span class="label">פחמימות</span><span class="value">204g / 240g</span></div>
+      <div class="mock-row"><span class="label">שומן</span><span class="value">62g / 70g</span></div>
+      <div class="mock-row"><span class="label">מים</span><span class="value">2.1L / 3L</span></div>
+      <div class="mock-row"><span class="label">צעדים</span><span class="value">7,840</span></div>
+      <div class="mock-row"><span class="label">סשן Lunge היום</span><span class="value">✓ 14:30</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="quote-section">
+  <p class="quote-text">"העובד שלכם הוא <em>החומרה הכי יקרה</em> שיש לכם. אל תחכו ל-Critical Error לפני שתעשו Patch."</p>
+  <p class="quote-sub">// LUNGE — PERFORMANCE & WELLNESS OPTIMIZATION</p>
+</div>
+
+<!-- CTA -->
+<div class="cta-section" id="cta">
+  <div class="cta-left">
+    <div class="section-label">// NEXT STEP</div>
+    <h2>מוכנים ל-Pilot?</h2>
+    <p>אנחנו מציעים Pilot מובנה של 6 שבועות — מדיד, מדווח, וניתן להרחבה. HR יקבל מלוא הנתונים לפני כל התחייבות שנתית. אין lock-in, אין התחייבות מראש.</p>
+    <a href="mailto:hello@chef-lunge.com?subject=LUNGE Pilot Request" class="btn-primary">שלחו לנו מייל</a>
+  </div>
+  <div class="cta-right">
+    <h3>מה כולל ה-Pilot?</h3>
+    <p>
+      ✓ 6 שבועות Live Sessions מלאים<br><br>
+      ✓ גישה אופציונלית לאפליקציית Chef Lunge<br><br>
+      ✓ Dashboard HR עם נתונים מדידים<br><br>
+      ✓ ישיבת סיום עם המלצות ו-Roadmap
+    </p>
+    <a href="mailto:hello@chef-lunge.com?subject=LUNGE Pilot Request" class="btn-dark">בואו נדבר →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">LUNGE</div>
+  <div class="footer-links">
+    <a href="https://apps.apple.com/es/app/chef-lunge/id6745457803?l=en-GB" target="_blank" rel="noopener">App Store</a>
+    <a href="https://play.google.com/store/apps/details?id=com.nutricloud.ChefLunge" target="_blank" rel="noopener">Google Play</a>
+    <a href="mailto:hello@chef-lunge.com">Contact</a>
+  </div>
+  <div class="footer-note">// Side effects: high energy, better posture, actually enjoying your workday.</div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+</script>
+</body>
+</html>
